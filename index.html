@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<title>اكتشف نحو الرشاقة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@500;700;800;900&family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --pine:#153A32;
+    --pine-deep:#0E2B25;
+    --lime:#C9E265;
+    --lime-deep:#A9C43F;
+    --paper:#F4F7EF;
+    --card:#FFFFFF;
+    --ink:#16241C;
+    --ink-soft:#5B6B62;
+    --line: rgba(21,58,50,0.12);
+    --danger:#E85D42;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Tajawal', sans-serif;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px 14px;
+    line-height:1.6;
+  }
+  .bg-deco{
+    position:fixed; inset:0; z-index:-1; overflow:hidden; pointer-events:none;
+  }
+  .bg-deco span{
+    position:absolute; border-radius:50%;
+    background:radial-gradient(circle at 30% 30%, rgba(201,226,101,0.35), transparent 70%);
+  }
+  .bg-deco span:nth-child(1){ width:420px; height:420px; top:-140px; right:-140px; }
+  .bg-deco span:nth-child(2){ width:320px; height:320px; bottom:-120px; left:-100px; background:radial-gradient(circle at 30% 30%, rgba(21,58,50,0.10), transparent 70%);}
+
+  .app{
+    width:100%;
+    max-width:480px;
+  }
+
+  /* progress */
+  .progress-wrap{
+    display:flex; align-items:center; gap:10px;
+    margin-bottom:22px;
+    padding:0 4px;
+  }
+  .progress-track{
+    flex:1;
+    height:8px;
+    border-radius:999px;
+    background:rgba(21,58,50,0.10);
+    overflow:hidden;
+    position:relative;
+  }
+  .progress-fill{
+    position:absolute; inset:0 auto 0 0;
+    width:0%;
+    background:linear-gradient(90deg, var(--lime-deep), var(--lime));
+    border-radius:999px;
+    transition:width .45s cubic-bezier(.4,0,.2,1);
+  }
+  .progress-leaf{
+    font-size:18px;
+    transform:scaleX(-1);
+    transition:transform .3s;
+    flex-shrink:0;
+  }
+  .progress-count{
+    font-family:'Cairo', sans-serif;
+    font-weight:700;
+    font-size:13px;
+    color:var(--ink-soft);
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:22px;
+    padding:32px 26px 28px;
+    box-shadow:0 20px 50px -20px rgba(14,43,37,0.25), 0 2px 8px rgba(14,43,37,0.06);
+    border:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+
+  .step{ display:none; animation:rise .45s cubic-bezier(.2,.7,.3,1); }
+  .step.active{ display:block; }
+  @keyframes rise{
+    from{ opacity:0; transform:translateY(14px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+
+  .eyebrow{
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size:12px;
+    letter-spacing:.5px;
+    color:var(--lime-deep);
+    background:rgba(201,226,101,0.18);
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding:6px 12px;
+    border-radius:999px;
+    margin-bottom:16px;
+  }
+
+  h1{
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size:26px;
+    color:var(--pine-deep);
+    margin:0 0 12px;
+    line-height:1.35;
+  }
+  .lead{
+    font-size:15.5px;
+    color:var(--ink-soft);
+    margin:0 0 26px;
+  }
+
+  .q-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:34px;height:34px;
+    border-radius:10px;
+    background:var(--pine);
+    color:#fff;
+    font-family:'Cairo',sans-serif;
+    font-weight:800;
+    font-size:14px;
+    margin-bottom:14px;
+  }
+  .q-title{
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size:19px;
+    color:var(--pine-deep);
+    margin:0 0 20px;
+    line-height:1.5;
+  }
+
+  .options{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+  }
+  .opt{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    text-align:right;
+    background:var(--paper);
+    border:1.5px solid var(--line);
+    border-radius:14px;
+    padding:14px 16px;
+    font-family:'Tajawal', sans-serif;
+    font-weight:500;
+    font-size:15px;
+    color:var(--ink);
+    cursor:pointer;
+    transition:border-color .2s, background .2s, transform .15s;
+  }
+  .opt:hover{ border-color:var(--lime-deep); background:#fff; }
+  .opt:active{ transform:scale(.98); }
+  .opt.selected{
+    border-color:var(--pine);
+    background:var(--pine);
+    color:#fff;
+  }
+  .opt-letter{
+    flex-shrink:0;
+    width:28px;height:28px;
+    border-radius:8px;
+    background:rgba(21,58,50,0.08);
+    display:flex;align-items:center;justify-content:center;
+    font-family:'Cairo',sans-serif;
+    font-weight:800;
+    font-size:13px;
+    color:var(--pine);
+    transition:background .2s, color .2s;
+  }
+  .opt.selected .opt-letter{
+    background:var(--lime);
+    color:var(--pine-deep);
+  }
+
+  .btn-primary{
+    width:100%;
+    border:none;
+    background:var(--pine);
+    color:#fff;
+    font-family:'Cairo', sans-serif;
+    font-weight:800;
+    font-size:16px;
+    padding:16px 20px;
+    border-radius:14px;
+    cursor:pointer;
+    margin-top:6px;
+    transition:background .2s, transform .15s;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+  }
+  .btn-primary:hover{ background:var(--pine-deep); }
+  .btn-primary:active{ transform:scale(.98); }
+
+  .back-row{
+    display:flex; justify-content:flex-start; margin-top:16px;
+  }
+  .btn-back{
+    background:none; border:none; cursor:pointer;
+    font-family:'Tajawal',sans-serif; font-weight:500;
+    font-size:13.5px; color:var(--ink-soft);
+    display:flex; align-items:center; gap:4px;
+    padding:4px;
+  }
+  .btn-back:hover{ color:var(--pine); }
+
+  /* intro visuals */
+  .hero-badge{
+    width:64px; height:64px;
+    border-radius:18px;
+    background:linear-gradient(135deg, var(--lime), var(--lime-deep));
+    display:flex; align-items:center; justify-content:center;
+    font-size:30px;
+    margin-bottom:18px;
+    box-shadow:0 10px 24px -8px rgba(169,196,63,0.6);
+  }
+  .stat-row{
+    display:flex; gap:10px; margin:20px 0 26px;
+  }
+  .stat{
+    flex:1;
+    background:var(--paper);
+    border-radius:14px;
+    padding:12px 10px;
+    text-align:center;
+    border:1px solid var(--line);
+  }
+  .stat b{
+    display:block;
+    font-family:'Cairo',sans-serif;
+    font-weight:800;
+    font-size:18px;
+    color:var(--pine-deep);
+  }
+  .stat span{
+    font-size:11.5px;
+    color:var(--ink-soft);
+  }
+
+  /* final step */
+  .final-icon{
+    width:70px;height:70px;
+    border-radius:20px;
+    background:linear-gradient(135deg, var(--lime), var(--lime-deep));
+    display:flex;align-items:center;justify-content:center;
+    font-size:32px;
+    margin:0 auto 18px;
+    box-shadow:0 12px 28px -10px rgba(169,196,63,0.7);
+  }
+  .final-title{
+    font-family:'Cairo', sans-serif;
+    font-weight:900;
+    font-size:22px;
+    color:var(--pine-deep);
+    text-align:center;
+    margin:0 0 14px;
+    line-height:1.4;
+  }
+  .final-text{
+    font-size:15px;
+    color:var(--ink-soft);
+    text-align:center;
+    margin:0 0 24px;
+  }
+  .final-perks{
+    display:flex; flex-direction:column; gap:10px;
+    margin-bottom:24px;
+  }
+  .perk{
+    display:flex; align-items:center; gap:10px;
+    background:var(--paper);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:11px 14px;
+    font-size:13.5px;
+    color:var(--ink);
+  }
+  .perk .tick{
+    flex-shrink:0;
+    width:22px;height:22px;
+    border-radius:50%;
+    background:var(--lime);
+    color:var(--pine-deep);
+    display:flex;align-items:center;justify-content:center;
+    font-size:12px; font-weight:800;
+  }
+  .cta-link{
+    display:block;
+    text-decoration:none;
+  }
+  .timer-note{
+    text-align:center;
+    font-size:12px;
+    color:var(--ink-soft);
+    margin-top:12px;
+  }
+
+  @media (max-width:380px){
+    .card{ padding:26px 18px 22px; }
+    h1{ font-size:22px; }
+    .q-title{ font-size:17px; }
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .step, .opt, .btn-primary{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-deco"><span></span><span></span></div>
+
+<div class="app">
+
+  <div class="progress-wrap" id="progressWrap">
+    <span class="progress-leaf" id="progressLeaf">🌱</span>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <span class="progress-count" id="progressCount">1 / 12</span>
+  </div>
+
+  <div class="card">
+
+    <!-- Step 1: Welcome -->
+    <div class="step active" data-step="1">
+      <div class="hero-badge">🌿</div>
+      <span class="eyebrow">اختبار سريع</span>
+      <h1>مرحبًا بك في اكتشف نحو الرشاقة</h1>
+      <p class="lead">هذا الاختبار مخصص لمساعدتك على معرفة ما قد يؤثر على وصولك لهدفك الصحي. أجب عن 8–10 أسئلة لنساعدك في تحديد العوائق واتخاذ خطوة نحو تحقيق أهدافك.</p>
+      <div class="stat-row">
+        <div class="stat"><b>2 دقيقة</b><span>الوقت المتوقع</span></div>
+        <div class="stat"><b>10 أسئلة</b><span>بسيطة وسريعة</span></div>
+        <div class="stat"><b>مجاني</b><span>بدون أي تكلفة</span></div>
+      </div>
+      <button class="btn-primary" onclick="goTo(2)">ابدأ الاختبار الآن ←</button>
+    </div>
+
+    <!-- Step 2: Intro to quiz -->
+    <div class="step" data-step="2">
+      <span class="eyebrow">قبل أن نبدأ</span>
+      <h1>ما الذي يعيق وصولك إلى هدفك الصحي؟</h1>
+      <p class="lead">اختبر معلوماتك واكتشف أبرز العوائق التي قد تؤثر على تحقيق هدفك الصحي.</p>
+      <button class="btn-primary" onclick="goTo(3)">حسنًا، فهمت ←</button>
+      <div class="back-row"><button class="btn-back" onclick="goTo(1)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 3: Q1 -->
+    <div class="step" data-step="3">
+      <div class="q-num">1</div>
+      <h2 class="q-title">ما هو هدفك الأساسي؟</h2>
+      <div class="options">
+        <button class="opt" data-q="3" onclick="selectOpt(this,4)"><span class="opt-letter">A</span>خسارة الوزن</button>
+        <button class="opt" data-q="3" onclick="selectOpt(this,4)"><span class="opt-letter">B</span>شد الجسم</button>
+        <button class="opt" data-q="3" onclick="selectOpt(this,4)"><span class="opt-letter">C</span>زيادة الكتلة العضلية</button>
+        <button class="opt" data-q="3" onclick="selectOpt(this,4)"><span class="opt-letter">D</span>تحسين الصحة العامة</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(2)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 4: Q2 -->
+    <div class="step" data-step="4">
+      <div class="q-num">2</div>
+      <h2 class="q-title">كم مرة حاولت إنقاص وزنك من قبل؟</h2>
+      <div class="options">
+        <button class="opt" data-q="4" onclick="selectOpt(this,5)"><span class="opt-letter">A</span>أول مرة</button>
+        <button class="opt" data-q="4" onclick="selectOpt(this,5)"><span class="opt-letter">B</span>1–3 مرات</button>
+        <button class="opt" data-q="4" onclick="selectOpt(this,5)"><span class="opt-letter">C</span>أكثر من 3 مرات</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(3)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 5: Q3 -->
+    <div class="step" data-step="5">
+      <div class="q-num">3</div>
+      <h2 class="q-title">كيف تصف نشاطك اليومي؟</h2>
+      <div class="options">
+        <button class="opt" data-q="5" onclick="selectOpt(this,6)"><span class="opt-letter">A</span>قليل الحركة</button>
+        <button class="opt" data-q="5" onclick="selectOpt(this,6)"><span class="opt-letter">B</span>متوسط</button>
+        <button class="opt" data-q="5" onclick="selectOpt(this,6)"><span class="opt-letter">C</span>نشيط</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(4)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 6: Q4 -->
+    <div class="step" data-step="6">
+      <div class="q-num">4</div>
+      <h2 class="q-title">هل يثبت وزنك رغم الالتزام بالنظام الغذائي؟</h2>
+      <div class="options">
+        <button class="opt" data-q="6" onclick="selectOpt(this,7)"><span class="opt-letter">A</span>نعم</button>
+        <button class="opt" data-q="6" onclick="selectOpt(this,7)"><span class="opt-letter">B</span>أحيانًا</button>
+        <button class="opt" data-q="6" onclick="selectOpt(this,7)"><span class="opt-letter">C</span>لا</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(5)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 7: Q5 -->
+    <div class="step" data-step="7">
+      <div class="q-num">5</div>
+      <h2 class="q-title">هل تشعر بالجوع أو الرغبة في تناول الحلويات كثيرًا؟</h2>
+      <div class="options">
+        <button class="opt" data-q="7" onclick="selectOpt(this,8)"><span class="opt-letter">A</span>نعم</button>
+        <button class="opt" data-q="7" onclick="selectOpt(this,8)"><span class="opt-letter">B</span>أحيانًا</button>
+        <button class="opt" data-q="7" onclick="selectOpt(this,8)"><span class="opt-letter">C</span>نادرًا</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(6)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 8: Q6 -->
+    <div class="step" data-step="8">
+      <div class="q-num">6</div>
+      <h2 class="q-title">هل تعرف نسبة الدهون أو الكتلة العضلية في جسمك؟</h2>
+      <div class="options">
+        <button class="opt" data-q="8" onclick="selectOpt(this,9)"><span class="opt-letter">A</span>نعم</button>
+        <button class="opt" data-q="8" onclick="selectOpt(this,9)"><span class="opt-letter">B</span>لا</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(7)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 9: Q7 -->
+    <div class="step" data-step="9">
+      <div class="q-num">7</div>
+      <h2 class="q-title">ما أكبر تحدٍّ تواجهه؟</h2>
+      <div class="options">
+        <button class="opt" data-q="9" onclick="selectOpt(this,10)"><span class="opt-letter">A</span>الالتزام</button>
+        <button class="opt" data-q="9" onclick="selectOpt(this,10)"><span class="opt-letter">B</span>ثبات الوزن</button>
+        <button class="opt" data-q="9" onclick="selectOpt(this,10)"><span class="opt-letter">C</span>ضيق الوقت</button>
+        <button class="opt" data-q="9" onclick="selectOpt(this,10)"><span class="opt-letter">D</span>لا أعرف سبب المشكلة</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(8)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 10: Q8 -->
+    <div class="step" data-step="10">
+      <div class="q-num">8</div>
+      <h2 class="q-title">هل لديك دعم من العائلة أو الأصدقاء في رحلتك الصحية؟</h2>
+      <div class="options">
+        <button class="opt" data-q="10" onclick="selectOpt(this,11)"><span class="opt-letter">A</span>نعم، دائمًا</button>
+        <button class="opt" data-q="10" onclick="selectOpt(this,11)"><span class="opt-letter">B</span>أحيانًا</button>
+        <button class="opt" data-q="10" onclick="selectOpt(this,11)"><span class="opt-letter">C</span>لا يوجد دعم</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(9)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 11: Q9 -->
+    <div class="step" data-step="11">
+      <div class="q-num">9</div>
+      <h2 class="q-title">ما هو أكبر سبب لعدم استمرارك في النظام الصحي سابقًا؟</h2>
+      <div class="options">
+        <button class="opt" data-q="11" onclick="selectOpt(this,12)"><span class="opt-letter">A</span>ضعف الدافع</button>
+        <button class="opt" data-q="11" onclick="selectOpt(this,12)"><span class="opt-letter">B</span>ضغوط الحياة اليومية</button>
+        <button class="opt" data-q="11" onclick="selectOpt(this,12)"><span class="opt-letter">C</span>عدم وضوح النتائج</button>
+        <button class="opt" data-q="11" onclick="selectOpt(this,12)"><span class="opt-letter">D</span>أسباب صحية أو طبية</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(10)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 12: Q10 -->
+    <div class="step" data-step="12">
+      <div class="q-num">10</div>
+      <h2 class="q-title">ما الذي تعتقد أنه سيساعدك أكثر لتحقيق هدفك الصحي القادم؟</h2>
+      <div class="options">
+        <button class="opt" data-q="12" onclick="selectOpt(this,13)"><span class="opt-letter">A</span>خطة غذائية واضحة</button>
+        <button class="opt" data-q="12" onclick="selectOpt(this,13)"><span class="opt-letter">B</span>متابعة مع مختص</button>
+        <button class="opt" data-q="12" onclick="selectOpt(this,13)"><span class="opt-letter">C</span>مجموعة دعم وتحفيز</button>
+        <button class="opt" data-q="12" onclick="selectOpt(this,13)"><span class="opt-letter">D</span>تحديد هدف واقعي</button>
+      </div>
+      <div class="back-row"><button class="btn-back" onclick="goTo(11)">→ رجوع</button></div>
+    </div>
+
+    <!-- Step 13: Final result -->
+    <div class="step" data-step="13">
+      <div class="final-icon">🟢</div>
+      <h2 class="final-title">انطلاقة ذكية نحو أهدافك الصحية!</h2>
+      <p class="final-text">كل ما تحتاجه هو بداية فعّالة مع خطة واضحة تناسبك. احجز تقييمك المجاني مع أخصائي نحو الرشاقة الآن، واكتشف الأسس التي ستمنحك نتائج سريعة ودائمة دون تعقيد أو تردد.</p>
+      <div class="final-perks">
+        <div class="perk"><span class="tick">✓</span>تقييم مجاني 100%</div>
+        <div class="perk"><span class="tick">✓</span>لا يستغرق أكثر من 10 دقائق</div>
+        <div class="perk"><span class="tick">✓</span>يشرح لك الأخصائي نتائجك وخطواتك الأولى</div>
+      </div>
+      <a class="cta-link" href="https://fitfirstt.com/mZjvrwq" target="_blank" rel="noopener">
+        <button class="btn-primary">احجز تقييمك واستشارتك المجانية الآن</button>
+      </a>
+      <p class="timer-note">بناءً على إجاباتك، أنت جاهز للخطوة التالية 🌿</p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  const totalSteps = 13;
+  const leafFrames = ['🌱','🌿','🌳'];
+
+  function updateProgress(step){
+    const pct = Math.min(100, Math.round((step / totalSteps) * 100));
+    document.getElementById('progressFill').style.width = pct + '%';
+    const displayStep = Math.min(step, 12);
+    document.getElementById('progressCount').textContent = displayStep + ' / 12';
+    const leafIndex = step >= 13 ? 2 : step >= 6 ? 1 : 0;
+    document.getElementById('progressLeaf').textContent = leafFrames[leafIndex];
+  }
+
+  function goTo(step){
+    document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
+    const target = document.querySelector('.step[data-step="' + step + '"]');
+    if(target){ target.classList.add('active'); }
+    updateProgress(step);
+    window.scrollTo({top:0, behavior:'smooth'});
+  }
+
+  function selectOpt(btn, nextStep){
+    const group = btn.parentElement.querySelectorAll('.opt');
+    group.forEach(o => o.classList.remove('selected'));
+    btn.classList.add('selected');
+    setTimeout(() => { goTo(nextStep); }, 320);
+  }
+
+  updateProgress(1);
+</script>
+
+</body>
+</html>
