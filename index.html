@@ -545,15 +545,14 @@
       <div class="back-row"><button class="btn-back" onclick="goTo(9)">→ رجوع</button></div>
     </div>
 
-    <!-- Step 11: Final result -->
+    <!-- Step 11: Final result (content injected dynamically, randomized) -->
     <div class="step" data-step="11">
       <div class="final-icon"><img src="https://i.ibb.co/tTgmNX8X/fittt-8.png" width="100" alt="" srcset=""></div>
-      <h2 class="final-title">انطلاقة ذكية نحو أهدافك الصحية!</h2>
-      <p class="final-text">كل ما تحتاجه هو بداية فعّالة مع خطة واضحة تناسبك. احجز تقييمك المجاني مع أخصائي نحو الرشاقة الآن، واكتشف الأسس التي ستمنحك نتائج سريعة ودائمة دون تعقيد أو تردد.</p>
+      <h2 class="final-title" id="finalTitleText">انطلاقة ذكية نحو أهدافك الصحية!</h2>
+      <p class="final-text" id="finalDescText"></p>
       <div class="final-perks">
-        <div class="perk"><span class="tick">✓</span>تقييم مجاني 100%</div>
-        <div class="perk"><span class="tick">✓</span>لا يستغرق أكثر من 10 دقائق</div>
-        <div class="perk"><span class="tick">✓</span>يشرح لك الأخصائي نتائجك وخطواتك الأولى</div>
+        <div class="perk"><span class="tick">✓</span><span id="finalSolutionText"></span></div>
+        <div class="perk"><span class="tick">🎁</span><span id="finalGiftText"></span></div>
       </div>
       <a class="cta-link" href="https://api.whatsapp.com/send/?phone=966574275693&text=%D8%A7%D8%B1%D9%8A%D8%AF+%D8%AD%D8%AC%D8%B2+%D9%81%D8%AD%D8%B5+%D9%88%D8%A7%D8%B3%D8%AA%D8%B4%D8%A7%D8%B1%D9%87+%D8%A7%D9%84%D8%AD%D9%8A%D9%86&type=phone_number&app_absent=0" target="_blank" rel="noopener">
         <button class="btn-primary">احجز تقييمك واستشارتك المجانية الآن</button>
@@ -571,6 +570,46 @@
   // map internal step -> displayed question number (0 = not a counted question, e.g. welcome/intro/final)
   const stepToQuestionNum = {1:0, 2:0, 3:1, 4:2, 5:3, 6:4, 7:5, 8:6, 9:7, 10:8, 11:8};
 
+  // ---- Randomized final results ----
+  const finalResults = [
+    {
+      title: "بطء الحرق هو العائق الأكبر لديك",
+      desc: "تشير إجاباتك إلى أن نمط حياتك الحالي قد يؤثر على كفاءة حرق الدهون واستجابة الجسم لخسارة الوزن.",
+      solution: "الحل: تقييم معدل الحرق وتركيب الجسم يساعد على تحديد الخطة المناسبة لك.",
+      gift: "مؤهل للحصول على فحص مجاني داخل مركز الرشاقة أولاً."
+    },
+    {
+      title: "الجوع والرغبة في السكريات قد يعرقلان تقدمك",
+      desc: "تشير إجاباتك إلى أن التحكم في الشهية قد يكون أحد أكبر أسباب صعوبة خسارة الوزن.",
+      solution: "الحل: معرفة احتياجات جسمك الغذائية تساعد على تقليل الجوع وتحسين الالتزام.",
+      gift: "مؤهل للحصول على فحص مجاني واستشارة أولية."
+    },
+    {
+      title: "المشكلة ليست في الإرادة بل في الخطة",
+      desc: "تشير إجاباتك إلى أنك حاولت عدة مرات سابقاً، مما يدل على أن المشكلة قد تكون في اختيار الطريقة المناسبة وليس في الالتزام.",
+      solution: "الحل: تقييم متخصص يساعد على اختيار خطة تناسب جسمك وأسلوب حياتك.",
+      gift: "مؤهل للحصول على فحص مجاني داخل المركز."
+    },
+    {
+      title: "لديك فرصة ممتازة لتحقيق نتائج سريعة",
+      desc: "تشير إجاباتك إلى أن لديك دافعاً جيداً للبدء وأن بعض التعديلات البسيطة قد تساعدك على الاقتراب من هدفك.",
+      solution: "الحل: فحص دقيق للحالة يساعد على تحديد أفضل نقطة انطلاق.",
+      gift: "مؤهل للحصول على الفحص والاستشارة المجانية."
+    }
+  ];
+
+  let chosenResult = null; // stays fixed once picked, so back/forward doesn't reshuffle it
+
+  function pickRandomResult(){
+    if(!chosenResult){
+      chosenResult = finalResults[Math.floor(Math.random() * finalResults.length)];
+      document.getElementById('finalTitleText').textContent = chosenResult.title;
+      document.getElementById('finalDescText').textContent = chosenResult.desc;
+      document.getElementById('finalSolutionText').textContent = chosenResult.solution;
+      document.getElementById('finalGiftText').textContent = '🎁 ' + chosenResult.gift;
+    }
+  }
+
   function updateProgress(step){
     const qNum = stepToQuestionNum[step] ?? 0;
     const pct = Math.min(100, Math.round((qNum / totalQuestions) * 100));
@@ -584,6 +623,7 @@
     document.querySelectorAll('.step').forEach(el => el.classList.remove('active'));
     const target = document.querySelector('.step[data-step="' + step + '"]');
     if(target){ target.classList.add('active'); }
+    if(step === 11){ pickRandomResult(); }
     updateProgress(step);
     window.scrollTo({top:0, behavior:'smooth'});
   }
